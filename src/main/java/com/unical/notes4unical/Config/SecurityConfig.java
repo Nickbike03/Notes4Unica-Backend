@@ -37,13 +37,14 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()  // Permetti l'accesso pubblico agli endpoint di autenticazione
+                .requestMatchers("/api/open/**").permitAll()  // Permetti l'accesso pubblico agli endpoint di autenticazione
+                .requestMatchers("/api/auth/**").authenticated()  //permette l'accesso solo se si è gia autenticati
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .permitAll()
-            );
+            .formLogin(form-> form.loginProcessingUrl("api/open/login") 
+            )
+            .logout(form-> form.logoutUrl("api/auth/logout"))
+            ;
         return http.build();
     }
 }
